@@ -1,0 +1,167 @@
+The else clause is only executed when your while condition becomes false. If you break out of the loop, or if an exception is raised, it won't be executed.
+
+One way to think about it is as an if/else construct with respect to the condition:
+
+if condition:
+    handle_true()
+else:
+    handle_false()
+is analogous to the looping construct:
+
+while condition:
+    handle_true()
+else:
+    # condition is false now, handle and go on with the rest of the program
+    handle_false()
+An example might be along the lines of:
+
+while value < threshold:
+    if not process_acceptable_value(value):
+        # something went wrong, exit the loop; don't pass go, don't collect 200
+        break
+    value = update(value)
+else:
+    # value >= threshold; pass go, collect 200
+    handle_threshold_reached()
+The else clause is executed if you exit a block normally, by hitting the loop condition or falling off the bottom of a try block. It is not executed if you break or return out of a block, or raise an exception. It works for not only while and for loops, but also try blocks.
+
+You typically find it in places where normally you would exit a loop early, and running off the end of the loop is an unexpected/unusual occasion. For example, if you're looping through a list looking for a value:
+
+for value in values:
+    if value == 5:
+        print "Found it!"
+        break
+else:
+    print "Nowhere to be found. :-("
+Allow me to give an example on why to use this else-clause. But:
+
+my point is now better explained in Leo’s answer
+I use a for- instead of a while-loop, but else works similar (executes unless break was encountered)
+there are better ways to do this (e.g. wrapping it into a function or raising an exception)
+Breaking out of multiple levels of looping
+Here is how it works: the outer loop has a break at the end, so it would only be executed once. However, if the inner loop completes (finds no divisor), then it reaches the else statement and the outer break is never reached. This way, a break in the inner loop will break out of both loops, rather than just one.
+
+for k in [2, 3, 5, 7, 11, 13, 17, 25]:
+    for m in range(2, 10):
+        if k == m:
+            continue
+        print 'trying %s %% %s' % (k, m)
+        if k % m == 0:
+            print 'found a divisor: %d %% %d; breaking out of loop' % (k, m)
+            break
+    else:
+        continue
+    print 'breaking another level of loop'
+    break
+else:
+    print 'no divisor could be found!'
+The while statement is used for repeated execution as long as an expression is true:
+
+while_stmt ::=  "while" expression ":" suite
+                ["else" ":" suite]
+This repeatedly tests the expression and, if it is true, executes the first suite; if the expression is false (which may be the first time it is tested) the suite of the else clause, if present, is executed and the loop terminates.
+
+A break statement executed in the first suite terminates the loop without executing the else clause’s suite. A continue statement executed in the first suite skips the rest of the suite and goes back to testing the expression.
+The else clause is only executed when the while-condition becomes false.
+
+Here are some examples:
+
+Example 1: Initially the condition is false, so else-clause is executed.
+
+i = 99999999
+
+while i < 5:
+    print(i)
+    i += 1
+else:
+    print('this')
+OUTPUT:
+
+this
+Example 2: The while-condition i < 5 never became false because i == 3 breaks the loop, so else-clause was not executed.
+
+i = 0
+
+while i < 5:
+    print(i)
+    if i == 3:
+        break
+    i += 1
+else:
+    print('this')
+OUTPUT:
+
+0
+1
+2
+3
+Example 3: The while-condition i < 5 became false when i was 5, so else-clause was executed.
+
+i = 0
+
+while i < 5:
+    print(i)
+    i += 1
+else:
+    print('this')
+OUTPUT:
+
+0
+1
+2
+3
+4
+this
+
+At the first glance, it seems there is no different when using
+
+while CONDITION:
+    EXPRESSIONS
+print 'ELSE'
+print 'The next statement'
+and
+
+while CONDITION:
+    EXPRESSIONS
+else:
+    print 'ELSE'
+print 'The next statement'
+Because the print 'ELSE' statement seems always executed in both cases (both when the while loop finished or not run).
+
+Then, it's only different when the statement print 'ELSE' will not be executed. It's when there is a breakinside the code block under while
+
+In [17]: i = 0
+
+In [18]: while i < 5:
+    print i
+    if i == 2:
+        break
+    i = i +1
+else:
+    print 'ELSE'
+print 'The next statement'
+   ....:
+0
+1
+2
+The next statement
+If differ to:
+
+In [19]: i = 0
+
+In [20]: while i < 5:
+    print i
+    if i == 2:
+        break
+    i = i +1
+print 'ELSE'
+print 'The next statement'
+   ....:
+0
+1
+2
+ELSE
+The next statement
+return is not in this category, because it does the same effect for two above cases.
+
+exception raise also does not cause difference, because when it raises, where the next code will be executed is in exception handler (except block), the code in else clause or right after the while clause will not be executed.
